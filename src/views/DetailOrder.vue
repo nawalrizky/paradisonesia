@@ -1,3 +1,60 @@
+<script setup lang="ts">
+import { ref, onMounted } from 'vue';
+import { useRoute } from 'vue-router';
+import apiClient from '../http-common';
+
+const route = useRoute();
+const orderId = ref(route.params.orderId);
+const orderDetail = ref<orderDetail | null>(null);
+
+
+interface orderDetail {
+  id: number;
+  net_price: number;
+  price: number;
+  product_name: string;
+  product_description: string;
+  start_date: string;
+  end_date: string;
+  quantity: number;
+  note: string;
+  product: {
+    id: number;
+    name: string;
+    description: string;
+    price: string;
+    // ... other properties from the product
+  };
+  transaction: {
+    id: number;
+    invoice_number: string;
+    item_total_price: number;
+    item_total_net_price: number;
+    total_voucher_price: number;
+    amount: number;
+    status: {
+      id: number;
+      name: string | null;
+      description: string;
+    };
+  };
+  status: {
+    id: number;
+    name: string;
+    description: string;
+  };
+}
+
+onMounted(async () => {
+  try {
+    const response = await apiClient.get<{ data: orderDetail }>(`/v1/items/${orderId.value}`);
+    orderDetail.value = response.data.data || null;
+  } catch (error) {
+    console.error('Error fetching order details:', error);
+  }
+});
+
+</script>
 <template>
   <div class="px-6 py-8">
   <div class="flex justify-between">
@@ -23,7 +80,7 @@
               Nama Produk
             </th>
             <td class="px-3 py-2">
-              Paket Tur 1
+              {{ orderDetail?.product?.name }}
             </td>
 
           </tr>
@@ -41,7 +98,7 @@
               Harga
             </th>
             <td class=" px-3 py-2">
-              Rp 2.000.000
+              Rp {{ orderDetail?.product?.price }}
             </td>
           </tr>
           <tr class="border-b border-gray-200 dark:border-gray-700">
@@ -49,15 +106,7 @@
               Deskripsi
             </th>
             <td class=" px-3 py-2">
-              Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
-              industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and
-              scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into
-              electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of
-              Letraset sheets containing Lorem Ipsum passages, and Lorem Ipsum is simply dummy text of the printing and
-              typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an
-              unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not
-              only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was
-              popularised in the 1960s with the release of Letraset sheets containing.
+              {{ orderDetail?.product?.description }}
             </td>
           </tr>
 
@@ -127,7 +176,7 @@
               Nomor
             </th>
             <td class="px-3 py-2">
-              891382192
+             {{ orderDetail?.transaction?.invoice_number }}
             </td>
 
           </tr>
@@ -136,7 +185,7 @@
               Jumlah
             </th>
             <td class=" px-3 py-2">
-              1
+              {{ orderDetail?.transaction?.amount}}
             </td>
           </tr>
           <tr class="border-b border-gray-200 dark:border-gray-700">
@@ -144,7 +193,7 @@
               Total Harga
             </th>
             <td class=" px-3 py-2">
-              Rp 2.000.000
+              Rp  {{ orderDetail?.transaction?.item_total_price }}
             </td>
           </tr>
           <tr class="border-b border-gray-200 dark:border-gray-700">

@@ -1,7 +1,29 @@
-<script lang="ts">
-import { IonIcon } from '@ionic/vue';
-import { RouterLink } from 'vue-router';
+<script setup lang="ts">
+import { ref, onMounted } from 'vue';
+import { useRoute } from 'vue-router';
+import apiClient from '../http-common';
 
+const route = useRoute();
+const orderId = ref(route.params.orderId);
+
+interface Order {
+  id: number;
+  price: number;
+  product_name: string;
+  quantity: number;
+  // Add other properties from your API response
+}
+
+const orders = ref<Order[]>([]);
+
+onMounted(async () => {
+  try {
+    const response = await apiClient.get('/v1/merchants/me/items');
+    orders.value = response.data.data || [];
+  } catch (error) {
+    console.error('Error fetching orders:', error);
+  }
+});
 </script>
 <template>
   <div class="px-6 py-8">
@@ -103,7 +125,7 @@ import { RouterLink } from 'vue-router';
       </thead>
       <tbody class="">
          
-        <tr class="bg-white border-b hover:bg-gray-50 text-black content-center">
+        <tr v-for="order in orders" :key="order.id" class="bg-white border-b hover:bg-gray-50 text-black content-center">
           <td class="w-4 p-4">
             <div class="flex items-center">
               <input id="checkbox-all-search" type="checkbox"
@@ -112,10 +134,10 @@ import { RouterLink } from 'vue-router';
             </div>
           </td>
           <th scope="row" class="flex items-center p-6 font-medium text-gray-900 h-full ">
-            <router-link to="/order/detail-order" class="flex">
+            <router-link  :to="{ name: 'detail-order', params: { orderId: order.id } }" class="flex">
             <img class="w-10 h-10 rounded-md" src="src/assets/img1.png">
             <div class="pl-3">
-              <div class="text-base font-semibold">Paket Tur 1</div>
+              <div class="text-base font-semibold">{{ order.product_name }}</div>
               <div class="font-normal text-[0.6rem] text-gray-500">Paket Wisata</div>
             </div>
         </router-link>
@@ -129,102 +151,30 @@ import { RouterLink } from 'vue-router';
          
           <td class="px-6 py-4">
             <div class="flex">
-              <h1 class="border p-2 font-semibold bg-[#F7F7FC] text-sm border-gray-300 rounded-l-lg">Rp</h1>
+              <h1 class="border p-2 font-semibold bg-[#F7F7FC] text-sm border-gray-300 rounded-l-lg">Rp </h1>
               <div type="text" id="minimal_produk"
                 class="w-full rounded-lg rounded-l-none border border-l-white border-gray-300 text-sm text-gray-600 ">
-                2.150.000
+                {{ order.price }}
               </div>
             </div>
           </td>
 
           <td class=" px-6 py-4 ">
+            <div class="inline-flex gap-3">
             <button
-                    class=" px-7 py-1 text-sm border-[#0063A7] border text-white bg-[#0063A7] rounded-lg hover:bg-gray-100 hover:text-[#0063A7] focus:outline-none"
+    class=" px-7 py-1 text-sm border-red-600 border text-white bg-red-600 rounded-lg hover:bg-gray-100 hover:text-red-600 focus:outline-none">
+    Hapus
+  </button>
+            <button
+                    class=" px-7 py-1 text-sm border-[#0063A7] border text-white hover:bg-gray-100 hover:text-blue-600 bg-[#0063A7] rounded-lg focus:outline-none"
                     >
                   Konfirmasi
                   </button>
+                </div>
           </td>
         </tr>
   
-        <tr class="bg-white border-b hover:bg-gray-50 text-black">
-          <td class="w-4 p-4">
-            <div class="flex items-center">
-              <input id="checkbox-all-search" type="checkbox"
-                class="w-5 h-5 text-blue-600 bg-white border-gray-300 rounded focus:ring-blue-500 focus:ring-2 ">
-              <label for="checkbox-all-search" class="sr-only">checkbox</label>
-            </div>
-          </td>
-          <th scope="row" class="flex items-center p-6 font-medium text-gray-900 whitespace-nowrap ">
-            <img class="w-10 h-10 rounded-md" src="src/assets/img1.png">
-            <div class="pl-3">
-              <div class="text-base font-semibold">Paket Tur 2</div>
-              <div class="font-normal text-[0.6rem] text-gray-500">Paket Wisata</div>
-            </div>
-          </th>
-          <th scope="row" class=" items-center px-6 py-4 font-medium text-gray-900 whitespace-nowrap ">
-              <div class="text-base font-medium">Broto</div>
-              <div class="font-normal text-[0.6rem] ">broto@gmail.com</div>
-              <a href="#" class="text-sm text-[#FFA216]">Chat Pembeli</a>
-          </th>
-         
-          <td class="px-6 py-4">
-            <div class="flex">
-              <h1 class="border p-2 font-semibold bg-[#F7F7FC] text-sm border-gray-300 rounded-l-lg">Rp</h1>
-              <div type="text" id="minimal_produk"
-                class="w-full rounded-lg rounded-l-none border border-l-white border-gray-300 text-sm text-gray-600 ">
-                3.000.000
-              </div>
-            </div>
-          </td>
-
-          <td class=" px-6 py-4 ">
-            <button
-                    class=" px-7 py-1 text-sm border-red-600 border text-white bg-red-600 rounded-lg hover:bg-gray-100 hover:text-red-600 focus:outline-none"
-                    >
-                   Hapus
-                  </button>
-          </td>
-        </tr>
-        <tr class="bg-white border-b hover:bg-gray-50 text-black">
-          <td class="w-4 p-4">
-            <div class="flex items-center">
-              <input id="checkbox-all-search" type="checkbox"
-                class="w-5 h-5 text-blue-600 bg-white border-gray-300 rounded focus:ring-blue-500 focus:ring-2 ">
-              <label for="checkbox-all-search" class="sr-only">checkbox</label>
-            </div>
-          </td>
-          <th scope="row" class="flex items-center p-6 font-medium text-gray-900 whitespace-nowrap ">
-            <img class="w-10 h-10 rounded-md" src="src/assets/img1.png">
-            <div class="pl-3">
-              <div class="text-base font-semibold">Paket Tur 3</div>
-              <div class="font-normal text-[0.6rem] text-gray-500">Paket Wisata</div>
-            </div>
-          </th>
-         
-          <th scope="row" class=" items-center px-6 py-4 font-medium text-gray-900 whitespace-nowrap ">
-              <div class="text-base font-medium">Broto</div>
-              <div class="font-normal text-[0.6rem] ">broto@gmail.com</div>
-              <a href="#" class="text-sm text-[#FFA216]">Chat Pembeli</a>
-          </th>
-         
-          <td class="px-6 py-4">
-            <div class="flex">
-              <h1 class="border p-2 font-semibold bg-[#F7F7FC] text-sm border-gray-300 rounded-l-lg">Rp</h1>
-              <div type="text" id="minimal_produk"
-                class="w-full rounded-lg rounded-l-none border border-l-white border-gray-300 text-sm text-gray-600 ">
-                1.500.000
-              </div>
-            </div>
-          </td>
-
-          <td class=" px-6 py-4 ">
-            <button
-                    class=" px-7 py-1 text-sm border-red-600 border text-white bg-red-600 rounded-lg hover:bg-gray-100 hover:text-red-600 focus:outline-none"
-                    >
-                   Hapus
-                  </button>
-          </td>
-        </tr>
+        
       </tbody>
     </table>
   </div>

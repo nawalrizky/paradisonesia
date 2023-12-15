@@ -4,25 +4,6 @@ import DataProduk from '../components/DataProduk.vue';
 import PerformaToko from '../components/PerformaToko.vue';
 import BarChart from './BarChart.vue';
 
-interface User {
-  name: string;
-  email: string;
-  title: string;
-  title2: string;
-  status: string;
-  role: string;
-}
-
-const testUser: User = {
-  name: 'John Doe',
-  email: 'john@example.com',
-  title: 'Software Engineer',
-  title2: 'Web dev',
-  status: 'Active',
-  role: 'Owner',
-};
-
-const users = ref<User[]>([...Array(10).keys()].map(() => testUser));
 
 
 </script>
@@ -31,8 +12,8 @@ const users = ref<User[]>([...Array(10).keys()].map(() => testUser));
 <template class="bg-[#F5F5F5] ">
   <div class="px-6 py-8">
     <div class="mt-4">
-      <div class="flex flex-wrap -mx-6">
-        <div class="w-full px-6 sm:w-1/2 xl:w-1/4">
+      <div class="flex  -mx-6 gap-3">
+        <div class="w-full px-3 sm:w-1/2 xl:w-1/4">
           <div
             class="flex  items-center justify-between p-5 bg-[#3382B9] rounded-md shadow-md text-white"
           >
@@ -81,7 +62,7 @@ const users = ref<User[]>([...Array(10).keys()].map(() => testUser));
           </div>
         </div>
 
-        <div class="w-full px-6 sm:w-1/2 xl:w-1/4">
+        <div class="w-full px-3 sm:w-1/2 xl:w-1/4">
           <div
             class="flex items-center justify-between p-5 bg-[#FFA216] rounded-md shadow-md text-white"
           >
@@ -130,7 +111,7 @@ const users = ref<User[]>([...Array(10).keys()].map(() => testUser));
           </div>
         </div>
 
-        <div class="w-full px-6 sm:w-1/2 xl:w-1/4">
+        <div class="w-full px-3 sm:w-1/2 xl:w-1/4">
           <div
             class="flex items-center justify-between  p-5 bg-[#4DABF5] rounded-md shadow-md text-white"
           >
@@ -179,7 +160,7 @@ const users = ref<User[]>([...Array(10).keys()].map(() => testUser));
           </div>
         </div>
 
-        <div class="w-full px-6 sm:w-1/2 xl:w-1/4">
+        <div class="w-full px-3 sm:w-1/2 xl:w-1/4">
           <div
             class="flex items-center justify-between p-5 bg-[#0063A7] rounded-md shadow-md text-white"
           >
@@ -231,7 +212,7 @@ const users = ref<User[]>([...Array(10).keys()].map(() => testUser));
     </div>
     <div class="mt-8">
     <DataProduk />
-    <BarChart />
+
     </div>
     <div class="mt-8" />
     <PerformaToko />
